@@ -205,7 +205,11 @@ export function EventCard({ e, i, locale }: { e: WeddingEvent; i: number; locale
     locale === 'ur'
       ? ({ Tuesday: 'منگل', Wednesday: 'بدھ', Thursday: 'جمعرات', Friday: 'جمعہ' } as const)[e.day as 'Tuesday' | 'Wednesday' | 'Thursday' | 'Friday']
       : e.day;
-  const timeLabel = isRtl ? 'شام ۷:۰۰ – ۱۰:۰۰' : e.time;
+  const timeLabel = isRtl
+    ? e.id === 'mehndi'
+      ? 'شام ۶:۰۰ – ۱۰:۰۰'
+      : 'شام ۷:۰۰ – ۱۰:۰۰'
+    : e.time;
   const monthLabel = isRtl
     ? date.toLocaleString('ur-PK', { month: 'long' })
     : date.toLocaleString('en-GB', { month: 'long' }).toUpperCase();
