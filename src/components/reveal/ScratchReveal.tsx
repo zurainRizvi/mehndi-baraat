@@ -18,15 +18,19 @@ const backdrop = '#E4E5E0';
 
 export default function ScratchReveal({ locale }: { locale: Locale }) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const surfaceRef = useRef<HTMLDivElement | null>(null);
   const [isRevealed, setIsRevealed] = useState(false);
   const [showHint, setShowHint] = useState(true);
   const isDrawing = useRef(false);
   const hasTriggered = useRef(false);
+  const revealedRef = useRef(false);
+  const lastPoint = useRef<{ x: number; y: number } | null>(null);
   const isRtl = locale === 'ur';
 
   const celebrate = useCallback(async () => {
     if (hasTriggered.current) return;
     hasTriggered.current = true;
+    revealedRef.current = true;
     setShowHint(false);
     setIsRevealed(true);
     try {
@@ -61,12 +65,13 @@ export default function ScratchReveal({ locale }: { locale: Locale }) {
 
   const paintFoil = useCallback(() => {
     const canvas = canvasRef.current;
-    if (!canvas || isRevealed) return;
-    const ctx = canvas.getContext('2d');
+    if (!canvas || revealedRef.current) return;
+    const ctx = canvas.getContext('2d', { willReadFrequently: true });
     if (!ctx) return;
 
-    const width = canvas.offsetWidth || 210;
-    const height = canvas.offsetHeight || 200;
+    const width = canvas.offsetWidth;
+    const height = canvas.offsetHeight;
+    if (width < 2 || height < 2) return;
     canvas.width = width;
     canvas.height = height;
 
@@ -95,17 +100,52 @@ export default function ScratchReveal({ locale }: { locale: Locale }) {
     ctx.font = isRtl ? '12px Amiri, serif' : '500 10px "DM Sans", sans-serif';
     ctx.fillStyle = 'rgba(61,52,41,0.72)';
     ctx.fillText(isRtl ? 'یا فوری طور پر ظاہر کریں' : 'or tap Instant Reveal below', width / 2, height / 2 + 16);
-  }, [isRevealed, isRtl]);
+  }, [isRtl]);
 
   useEffect(() => {
     paintFoil();
+    const canvas = canvasRef.current;
+    if (!canvas || typeof ResizeObserver === 'undefined') return;
+    let lastW = canvas.offsetWidth;
+    let lastH = canvas.offsetHeight;
+    const observer = new ResizeObserver(() => {
+      const nextW = canvas.offsetWidth;
+      const nextH = canvas.offsetHeight;
+      if (Math.abs(nextW - lastW) < 2 && Math.abs(nextH - lastH) < 2) return;
+      lastW = nextW;
+      lastH = nextH;
+      paintFoil();
+    });
+    observer.observe(canvas);
+    return () => observer.disconnect();
   }, [paintFoil]);
 
-  const checkReveal = () => {
+  const scratchAt = useCallback((clientX: number, clientY: number) => {
     const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext('2d');
+    if (!canvas || revealedRef.current) return;
+    const ctx = canvas.getContext('2d', { willReadFrequently: true });
     if (!ctx) return;
+    const rect = canvas.getBoundingClientRect();
+    if (rect.width < 1 || rect.height < 1) return;
+    const x = ((clientX - rect.left) / rect.width) * canvas.width;
+    const y = ((clientY - rect.top) / rect.height) * canvas.height;
+
+    ctx.globalCompositeOperation = 'destination-out';
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+    ctx.lineWidth = Math.max(36, Math.min(canvas.width, canvas.height) * 0.2);
+    const prev = lastPoint.current;
+    ctx.beginPath();
+    if (prev) {
+      ctx.moveTo(prev.x, prev.y);
+      ctx.lineTo(x, y);
+      ctx.stroke();
+    } else {
+      ctx.arc(x, y, ctx.lineWidth / 2, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    lastPoint.current = { x, y };
+
     try {
       const data = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
       let clear = 0;
@@ -113,26 +153,89 @@ export default function ScratchReveal({ locale }: { locale: Locale }) {
       for (let i = 3; i < data.length; i += 16) {
         if (data[i] < 128) clear++;
       }
-      if ((clear / sampled) * 100 > 28) celebrate();
+      if (sampled > 0 && (clear / sampled) * 100 > 28) celebrate();
     } catch {
       // ignore
     }
-  };
+  }, [celebrate]);
 
-  const scratchAt = (clientX: number, clientY: number) => {
-    const canvas = canvasRef.current;
-    if (!canvas || isRevealed) return;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-    const rect = canvas.getBoundingClientRect();
-    const x = clientX - rect.left;
-    const y = clientY - rect.top;
-    ctx.globalCompositeOperation = 'destination-out';
-    ctx.beginPath();
-    ctx.arc(x, y, 22, 0, Math.PI * 2);
-    ctx.fill();
-    checkReveal();
-  };
+  useEffect(() => {
+    const surface = surfaceRef.current;
+    if (!surface || isRevealed) return;
+
+    let pausedHere = false;
+    const pauseScroll = (paused: boolean) => {
+      const main = document.querySelector('main');
+      if (!main) return;
+      if (paused) {
+        pausedHere = !main.classList.contains('snap-paused');
+        main.classList.add('snap-paused');
+        return;
+      }
+      if (pausedHere) main.classList.remove('snap-paused');
+      pausedHere = false;
+    };
+
+    const onTouchStart = (event: TouchEvent) => {
+      if (event.cancelable) event.preventDefault();
+      isDrawing.current = true;
+      lastPoint.current = null;
+      setShowHint(false);
+      pauseScroll(true);
+      const touch = event.changedTouches[0];
+      if (touch) scratchAt(touch.clientX, touch.clientY);
+    };
+    const onTouchMove = (event: TouchEvent) => {
+      if (!isDrawing.current) return;
+      if (event.cancelable) event.preventDefault();
+      const touch = event.changedTouches[0];
+      if (touch) scratchAt(touch.clientX, touch.clientY);
+    };
+    const onTouchEnd = () => {
+      isDrawing.current = false;
+      lastPoint.current = null;
+      pauseScroll(false);
+    };
+
+    const onPointerDown = (event: PointerEvent) => {
+      if (event.pointerType === 'touch') return;
+      event.preventDefault();
+      isDrawing.current = true;
+      lastPoint.current = null;
+      setShowHint(false);
+      scratchAt(event.clientX, event.clientY);
+    };
+    const onPointerMove = (event: PointerEvent) => {
+      if (event.pointerType === 'touch' || !isDrawing.current) return;
+      scratchAt(event.clientX, event.clientY);
+    };
+    const onPointerUp = (event: PointerEvent) => {
+      if (event.pointerType === 'touch') return;
+      isDrawing.current = false;
+      lastPoint.current = null;
+    };
+
+    surface.addEventListener('touchstart', onTouchStart, { passive: false });
+    surface.addEventListener('touchmove', onTouchMove, { passive: false });
+    surface.addEventListener('touchend', onTouchEnd);
+    surface.addEventListener('touchcancel', onTouchEnd);
+    surface.addEventListener('pointerdown', onPointerDown);
+    surface.addEventListener('pointermove', onPointerMove);
+    surface.addEventListener('pointerup', onPointerUp);
+    surface.addEventListener('pointercancel', onPointerUp);
+
+    return () => {
+      pauseScroll(false);
+      surface.removeEventListener('touchstart', onTouchStart);
+      surface.removeEventListener('touchmove', onTouchMove);
+      surface.removeEventListener('touchend', onTouchEnd);
+      surface.removeEventListener('touchcancel', onTouchEnd);
+      surface.removeEventListener('pointerdown', onPointerDown);
+      surface.removeEventListener('pointermove', onPointerMove);
+      surface.removeEventListener('pointerup', onPointerUp);
+      surface.removeEventListener('pointercancel', onPointerUp);
+    };
+  }, [isRevealed, scratchAt]);
 
   return (
     <Card
@@ -245,27 +348,30 @@ export default function ScratchReveal({ locale }: { locale: Locale }) {
             width: '100%',
           }}
         >
-          {/* Pink heart foil */}
+          {/* Pink heart foil. Touches land on this box, not the clipped canvas —
+              Android WebViews drop pointer events on clip-path / animated filters. */}
           <div
-            className={showHint ? 'scratch-heart-live' : undefined}
+            ref={surfaceRef}
+            className="scratch-surface"
             style={{
               position: 'relative',
               width: 'min(210px, 56vw)',
               height: 'min(200px, 54vw)',
               margin: '0 auto 10px',
               flexShrink: 0,
-              filter: `drop-shadow(0 12px 22px rgba(176,120,132,0.28))`,
               zIndex: 3,
+              touchAction: 'none',
             }}
           >
             <div
+              className={`scratch-heart-visual${showHint ? ' scratch-heart-live' : ''}`}
               style={{
                 position: 'absolute',
                 inset: 0,
                 clipPath: 'url(#scratch-heart-clip)',
                 WebkitClipPath: 'url(#scratch-heart-clip)',
                 overflow: 'hidden',
-                touchAction: 'none',
+                pointerEvents: 'none',
                 userSelect: 'none',
                 // Revealed (scratched) face — near-white blush so foil contrast is obvious
                 background: 'linear-gradient(165deg, #FFFEFE 0%, #FFF8F9 48%, #F7EBEE 100%)',
@@ -304,31 +410,13 @@ export default function ScratchReveal({ locale }: { locale: Locale }) {
               {!isRevealed && (
                 <canvas
                   ref={canvasRef}
-                  onPointerDown={(e) => {
-                    e.preventDefault();
-                    isDrawing.current = true;
-                    setShowHint(false);
-                    (e.target as HTMLElement).setPointerCapture?.(e.pointerId);
-                    scratchAt(e.clientX, e.clientY);
-                  }}
-                  onPointerMove={(e) => {
-                    if (!isDrawing.current) return;
-                    scratchAt(e.clientX, e.clientY);
-                  }}
-                  onPointerUp={() => {
-                    isDrawing.current = false;
-                  }}
-                  onPointerCancel={() => {
-                    isDrawing.current = false;
-                  }}
                   style={{
                     position: 'absolute',
                     inset: 0,
                     width: '100%',
                     height: '100%',
                     zIndex: 2,
-                    cursor: 'pointer',
-                    touchAction: 'none',
+                    pointerEvents: 'none',
                   }}
                 />
               )}
@@ -338,14 +426,19 @@ export default function ScratchReveal({ locale }: { locale: Locale }) {
                   <div className="foil-shimmer" />
                 <div className={`scratch-hint${isRtl ? ' is-rtl' : ''}`} aria-hidden>
                   <svg width="64" height="64" viewBox="0 0 64 64" fill="none">
-                    {/* Gold wand — reads clearly on pink foil */}
-                    <circle cx="14" cy="14" r="3.4" fill="#FFF8EE" stroke="#C6A15B" strokeWidth="1.35" />
+                    {/* Gold wand with a small star tip */}
                     <path d="M16.4 16.4 L48.6 48.6" stroke="#8A6A2E" strokeWidth="3.4" strokeLinecap="round" />
                     <path d="M16.4 16.4 L48.6 48.6" stroke="#E0C075" strokeWidth="1.55" strokeLinecap="round" />
                     <path d="M45.2 45.2 L50.4 50.4" stroke="#5C4A28" strokeWidth="3.6" strokeLinecap="round" />
-                    <path d="M10.6 8.2 L14 14 L8.2 10.8" stroke="#FFF2CE" strokeWidth="1.2" strokeLinecap="round" />
-                    <path d="M19 9 L14 14 L19.6 12.6" stroke="#E0C075" strokeWidth="1.15" strokeLinecap="round" />
-                    <circle cx="14" cy="14" r="1.25" fill="#C6A15B" />
+                    {/* Star on the top tip */}
+                    <path
+                      d="M14 6.2 L15.35 11.1 L20.4 11.1 L16.35 14.15 L17.7 19.1 L14 16.05 L10.3 19.1 L11.65 14.15 L7.6 11.1 L12.65 11.1 Z"
+                      fill="#FFF8EE"
+                      stroke="#C6A15B"
+                      strokeWidth="0.9"
+                      strokeLinejoin="round"
+                    />
+                    <circle cx="14" cy="14.2" r="1.1" fill="#C6A15B" />
                   </svg>
                 </div>
                 </>
@@ -371,7 +464,8 @@ export default function ScratchReveal({ locale }: { locale: Locale }) {
                 minHeight: 42,
                 flexShrink: 0,
                 position: 'relative',
-                zIndex: 3,
+                zIndex: 4,
+                touchAction: 'manipulation',
               }}
             >
               {isRtl ? '✨ فوری طور پر ظاہر کریں' : '✨ Tap to reveal instantly'}

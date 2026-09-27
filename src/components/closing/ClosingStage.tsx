@@ -25,14 +25,19 @@ export default function ClosingStage({ locale }: { locale: Locale }) {
         const video = videoRef.current;
         if (!entry || !video) return;
 
-        if (entry.intersectionRatio >= 0.9) {
+          if (entry.intersectionRatio >= 0.9) {
           if (onPage.current) return;
           onPage.current = true;
           setShowCopy(false);
           video.muted = true;
+          video.defaultMuted = true;
           video.playsInline = true;
+          video.setAttribute('muted', '');
+          video.setAttribute('playsinline', '');
+          video.setAttribute('webkit-playsinline', '');
           if (video.readyState >= 1) video.currentTime = 0;
-          video.play().catch(() => {
+          const pending = video.play();
+          void pending?.catch(() => {
             if (onPage.current) setShowCopy(true);
           });
           return;
@@ -70,6 +75,8 @@ export default function ClosingStage({ locale }: { locale: Locale }) {
         playsInline
         muted
         preload="metadata"
+        controls={false}
+        disablePictureInPicture
         onEnded={() => setShowCopy(true)}
         style={{
           position: 'absolute',
@@ -77,6 +84,7 @@ export default function ClosingStage({ locale }: { locale: Locale }) {
           width: '100%',
           height: '100%',
           objectFit: 'cover',
+          pointerEvents: 'none',
         }}
       />
 
@@ -134,12 +142,12 @@ export default function ClosingStage({ locale }: { locale: Locale }) {
                 {locale === 'ur' ? (
                   <>
                     <span>آپ کی آمد، </span>
-                    <em style={{ color: theme.colors.gold, fontStyle: 'normal' }}>ہماری خوشی۔</em>
+                    <em style={{ color: '#5C4520', fontStyle: 'normal', fontWeight: 700, fontFamily: "'Amiri', serif" }}>ہماری خوشی۔</em>
                   </>
                 ) : (
                   <>
                     <span>Your presence, </span>
-                    <em style={{ color: theme.colors.gold, fontStyle: 'italic' }}>our joy.</em>
+                    <em style={{ color: '#5C4520', fontStyle: 'italic', fontWeight: 700, whiteSpace: 'nowrap' }}>our joy.</em>
                   </>
                 )}
               </h2>
