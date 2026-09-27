@@ -69,7 +69,7 @@ export const wedding = {
     shareMessage: "You are warmly invited to Zurain and Abeeha's Mehndi and Baraat celebrations in Lahore, January 2027.",
   },
   rsvp: { deadline: '2026-12-20', maxGuests: 8 },
-  musicPath: '/audio/chaap-tilak.m4a',
+  musicPath: '/audio/islamic-calm.mp3',
   social: {
     title: 'Mehndi & Baraat — Zurain & Abeeha',
     description: 'Join us for Mehndi and Baraat. Lahore · January 2027.',
