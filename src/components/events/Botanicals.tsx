@@ -4,7 +4,7 @@ import React from 'react';
 import { theme, type EventThemeId } from '@/config/theme';
 
 /* Reusable Top Floral Arch Canopy (Spanning across top corners & center) */
-export function TopCanopyArch({ type }: { type: EventThemeId }) {
+export function TopCanopyArch({ type, whiteLeaves = false }: { type: EventThemeId; whiteLeaves?: boolean }) {
   const flowerColors = theme.events[type].flower;
 
   return (
@@ -71,8 +71,20 @@ export function TopCanopyArch({ type }: { type: EventThemeId }) {
         { stemX: 215, stemY: 55, lx: 222, ly: 68, angle: 10, s: 1.1 },
       ].map((leaf, idx) => {
         const tone = idx % 3;
-        const fill = tone === 0 ? '#FFFFFF' : tone === 1 ? flowerColors.secondary : flowerColors.primary;
-        const stroke = tone === 0 ? '#E0D6C3' : tone === 1 ? flowerColors.primary : flowerColors.dark;
+        const fill = whiteLeaves
+          ? '#FFFFFF'
+          : tone === 0
+            ? '#FFFFFF'
+            : tone === 1
+              ? flowerColors.secondary
+              : flowerColors.primary;
+        const stroke = whiteLeaves
+          ? '#E0D6C3'
+          : tone === 0
+            ? '#E0D6C3'
+            : tone === 1
+              ? flowerColors.primary
+              : flowerColors.dark;
         return (
         <g key={idx}>
           <path
@@ -88,7 +100,7 @@ export function TopCanopyArch({ type }: { type: EventThemeId }) {
               fill={fill}
               stroke={stroke}
               strokeWidth="0.5"
-              opacity={tone === 0 ? 1 : 0.92}
+              opacity={whiteLeaves || tone === 0 ? 1 : 0.92}
             />
             <path d="M 0 0 L 0 13" stroke="#C6A15B" strokeWidth="0.5" opacity="0.85" />
           </g>
@@ -208,7 +220,13 @@ export function EventCornerOrnament({ type, isRtl }: { type: EventThemeId; isRtl
 }
 
 /* Luxury Botanical Climbing Creeper Vines with Top Canopy Arch & Mirrored Symmetry */
-export function BotanicalClimber({ type }: { type: EventThemeId }) {
+export function BotanicalClimber({
+  type,
+  whiteCanopyLeaves = false,
+}: {
+  type: EventThemeId;
+  whiteCanopyLeaves?: boolean;
+}) {
   const flowerColors = theme.events[type].flower;
 
   // A single side's climber SVG (Left-oriented, right side will scaleX(-1))
@@ -364,7 +382,7 @@ export function BotanicalClimber({ type }: { type: EventThemeId }) {
       }}
     >
       {/* Top Canopy Arch */}
-      <TopCanopyArch type={type} />
+      <TopCanopyArch type={type} whiteLeaves={whiteCanopyLeaves} />
 
       {/* Left Climber */}
       <div
