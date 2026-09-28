@@ -80,7 +80,7 @@ main {
   justify-content: safe center;
 }
 
-/* Farewell note page — full viewport, centered cream card on dark silk */
+/* Farewell note page — open typography on soft silk, no glass card */
 .card.page-snap.farewell {
   height: var(--app-h, 100svh);
   min-height: var(--app-h, 100svh);
@@ -429,11 +429,12 @@ label,
 /* Farewell page — white + soft red petals on dark silk */
 .petals.farewell-white i {
   background: #FFFFFF;
-  box-shadow: 0 2px 8px rgba(180, 40, 40, 0.22);
+  box-shadow: 0 2px 8px rgba(255, 248, 238, 0.28);
 }
 
 .petals.farewell-white i:nth-child(3n) {
-  background: #E53935;
+  background: #E8A0A8;
+  box-shadow: 0 2px 8px rgba(176, 120, 132, 0.35);
 }
 
 .petals.farewell-white i:nth-child(3n + 1) {
@@ -441,11 +442,12 @@ label,
 }
 
 .petals.farewell-white i:nth-child(5n) {
-  background: #C62828;
+  background: #C9959E;
+  box-shadow: 0 2px 8px rgba(176, 120, 132, 0.32);
 }
 
 .petals.farewell-white i:nth-child(7n) {
-  background: #FFCDD2;
+  background: #FFF8EE;
 }
 
 .petals.red-white i {
