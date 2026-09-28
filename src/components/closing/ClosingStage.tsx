@@ -3,14 +3,14 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { theme } from '@/config/theme';
-import { Ornament } from '@/components/shared/Ornament';
 import type { Locale } from '@/config/translations';
+import RsvpCard from '@/components/rsvp/RsvpCard';
 
 export default function ClosingStage({ locale }: { locale: Locale }) {
   const sectionRef = useRef<HTMLElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const onPage = useRef(false);
-  const [showCopy, setShowCopy] = useState(false);
+  const [showRsvp, setShowRsvp] = useState(false);
 
   const videoSrc = `${theme.videos.closing}?v=${theme.videos.version}`;
   const posterSrc = `${theme.videos.closingPoster}?v=${theme.videos.version}`;
@@ -25,10 +25,10 @@ export default function ClosingStage({ locale }: { locale: Locale }) {
         const video = videoRef.current;
         if (!entry || !video) return;
 
-          if (entry.intersectionRatio >= 0.9) {
+        if (entry.intersectionRatio >= 0.9) {
           if (onPage.current) return;
           onPage.current = true;
-          setShowCopy(false);
+          setShowRsvp(false);
           video.muted = true;
           video.defaultMuted = true;
           video.playsInline = true;
@@ -38,7 +38,7 @@ export default function ClosingStage({ locale }: { locale: Locale }) {
           if (video.readyState >= 1) video.currentTime = 0;
           const pending = video.play();
           void pending?.catch(() => {
-            if (onPage.current) setShowCopy(true);
+            if (onPage.current) setShowRsvp(true);
           });
           return;
         }
@@ -47,7 +47,7 @@ export default function ClosingStage({ locale }: { locale: Locale }) {
           onPage.current = false;
           video.pause();
           if (video.readyState >= 1) video.currentTime = 0;
-          setShowCopy(false);
+          setShowRsvp(false);
         }
       },
       { threshold: [0, 0.5, 0.9] }
@@ -77,7 +77,7 @@ export default function ClosingStage({ locale }: { locale: Locale }) {
         preload="metadata"
         controls={false}
         disablePictureInPicture
-        onEnded={() => setShowCopy(true)}
+        onEnded={() => setShowRsvp(true)}
         style={{
           position: 'absolute',
           inset: 0,
@@ -89,69 +89,25 @@ export default function ClosingStage({ locale }: { locale: Locale }) {
       />
 
       <AnimatePresence>
-        {showCopy && (
+        {showRsvp && (
           <motion.div
-            initial={{ opacity: 0, y: 24, scale: 0.96 }}
+            initial={{ opacity: 0, y: 28, scale: 0.97 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             transition={{ duration: 0.85, ease: [0.22, 1, 0.36, 1] }}
             style={{
               position: 'absolute',
               inset: 0,
               zIndex: 3,
-              display: 'grid',
-              placeItems: 'center',
-              padding: 24,
-              background: 'linear-gradient(180deg, rgba(10,4,6,0.25), rgba(10,4,6,0.55))',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              padding: 'max(14px, env(safe-area-inset-top, 0px)) 14px max(14px, env(safe-area-inset-bottom, 0px))',
+              background: 'linear-gradient(180deg, rgba(10,4,6,0.28), rgba(10,4,6,0.62))',
+              overflowY: 'auto',
+              WebkitOverflowScrolling: 'touch',
             }}
           >
-            <div
-              style={{
-                maxWidth: 380,
-                width: '100%',
-                textAlign: 'center',
-                padding: '36px 26px',
-                borderRadius: 20,
-                background: theme.colors.creamGlass,
-                border: `1px solid ${theme.colors.goldLine}`,
-                boxShadow: '0 24px 60px rgba(0,0,0,0.4)',
-                color: theme.colors.ink,
-              }}
-            >
-              <p
-                className="arabic"
-                style={{
-                  fontSize: 26,
-                  lineHeight: 2,
-                  color: theme.colors.ink,
-                  margin: '0 0 10px',
-                  fontFamily: "'Amiri', serif",
-                }}
-              >
-                بَارَكَ اللَّهُ لَكُمَا وَبَارَكَ عَلَيْكُمَا وَجَمَعَ بَيْنَكُمَا فِي خَيْرٍ
-              </p>
-              <Ornament />
-              <h2
-                style={{
-                  fontSize: 34,
-                  lineHeight: 1.25,
-                  margin: '12px 0 0',
-                  fontFamily: "'Cormorant Garamond', serif",
-                  fontWeight: 500,
-                }}
-              >
-                {locale === 'ur' ? (
-                  <>
-                    <span>آپ کی آمد، </span>
-                    <em style={{ color: '#5C4520', fontStyle: 'normal', fontWeight: 700, fontFamily: "'Amiri', serif" }}>ہماری خوشی۔</em>
-                  </>
-                ) : (
-                  <>
-                    <span>Your presence, </span>
-                    <em style={{ color: '#5C4520', fontStyle: 'italic', fontWeight: 700, whiteSpace: 'nowrap' }}>our joy.</em>
-                  </>
-                )}
-              </h2>
-            </div>
+            <RsvpCard locale={locale} />
           </motion.div>
         )}
       </AnimatePresence>
