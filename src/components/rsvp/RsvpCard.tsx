@@ -280,10 +280,10 @@ _Zurain & Abeeha's Mehndi & Baraat Invitation_`;
     letterSpacing: isRtl ? '0.04em' : '0.14em',
     textTransform: isRtl ? 'none' : 'uppercase',
     color: theme.colors.goldSoft,
-    marginBottom: 6,
+    marginBottom: isRtl ? 4 : 6,
     fontWeight: 600,
     fontFamily: isRtl ? "'Amiri', serif" : undefined,
-    lineHeight: isRtl ? 1.7 : undefined,
+    lineHeight: isRtl ? 1.35 : undefined,
     textAlign: 'center',
   };
 
@@ -479,38 +479,30 @@ _Zurain & Abeeha's Mehndi & Baraat Invitation_`;
                   <label style={{ ...labelStyle, marginBottom: 8 }}>{isRtl ? 'تقریبات' : 'WHICH EVENTS?'}</label>
                   <div
                     style={{
-                      display: 'flex',
-                      flexDirection: 'column',
-                      alignItems: 'center',
+                      display: 'grid',
+                      gridTemplateColumns: '1fr 1fr',
                       gap: 8,
                       width: '100%',
+                      maxWidth: 340,
                     }}
                   >
-                    <div
-                      style={{
-                        display: 'grid',
-                        gridTemplateColumns: '1fr 1fr',
-                        gap: 8,
-                        width: '100%',
-                        maxWidth: 340,
-                      }}
-                    >
-                      {eventsList.map((ev) => {
-                        const on = selectedEvents.includes(ev.id);
-                        return (
-                          <button key={ev.id} type="button" onClick={() => toggleEvent(ev.id)} style={eventBtnStyle(on, ev.color)}>
-                            {isRtl ? ev.labelUr : ev.labelEn}
-                          </button>
-                        );
-                      })}
-                    </div>
+                    {eventsList.map((ev) => {
+                      const on = selectedEvents.includes(ev.id);
+                      return (
+                        <button key={ev.id} type="button" onClick={() => toggleEvent(ev.id)} style={eventBtnStyle(on, ev.color)}>
+                          {isRtl ? ev.labelUr : ev.labelEn}
+                        </button>
+                      );
+                    })}
                   </div>
                 </div>
               </>
             )}
 
             <div>
-              <label style={labelStyle}>{isRtl ? 'پیغام (اختیاری)' : 'A NOTE FOR THE COUPLE'}</label>
+              <label style={{ ...labelStyle, marginBottom: isRtl ? 2 : 4 }}>
+                {isRtl ? 'پیغام (اختیاری)' : 'A NOTE FOR THE COUPLE'}
+              </label>
               <textarea
                 name="message"
                 autoComplete="off"
@@ -520,9 +512,16 @@ _Zurain & Abeeha's Mehndi & Baraat Invitation_`;
                   pauseSnapForTyping();
                   setGuestMessage(e.target.value);
                 }}
-                rows={2}
+                rows={1}
                 placeholder={isRtl ? 'دعائیں یا پیغام...' : 'Optional dua or wishes...'}
-                style={{ ...fieldStyle, resize: 'none' }}
+                style={{
+                  ...fieldStyle,
+                  resize: 'none',
+                  margin: 0,
+                  lineHeight: isRtl ? 1.45 : 1.35,
+                  minHeight: 0,
+                  padding: '10px 16px',
+                }}
               />
             </div>
 

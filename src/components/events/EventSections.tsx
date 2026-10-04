@@ -7,7 +7,7 @@ import { theme } from '@/config/theme';
 import { t, type Locale } from '@/config/translations';
 import { Card, Ornament } from '@/components/shared/Ornament';
 import { Petals } from '@/components/shared/Petals';
-import { ScheduleBow, TopCanopyArch } from '@/components/events/Botanicals';
+import { BotanicalClimber, ScheduleBow, TopCanopyArch } from '@/components/events/Botanicals';
 import { schedulesData } from '@/components/events/schedulesData';
 import { addEventToNativeCalendar } from '@/utils/calendar';
 
@@ -27,73 +27,99 @@ export function Blessing({ locale }: { locale: Locale }) {
         background: theme.colors.card,
         color: theme.colors.ink,
         borderTop: `1px solid ${theme.colors.goldLine}`,
-        padding: '56px 26px',
+        padding: 0,
+        position: 'relative',
+        overflow: 'hidden',
+        justifyContent: 'flex-start',
       }}
     >
+      {/* Lively climbers + top canopy — red & white florals for the ayah page. */}
+      <BotanicalClimber type="blessing" />
       <Petals tone="red-white" amount={22} />
-      <p className="eyebrow" style={{ color: theme.colors.gold, letterSpacing: isRtl ? '0.1em' : undefined }}>
-        {isRtl ? 'اللہ کے نام سے' : 'IN THE NAME OF ALLAH'}
-      </p>
-      <p className="arabic" style={{ color: theme.colors.ink, margin: '12px 0', fontSize: 28, lineHeight: 1.9, fontFamily: "'Amiri', serif" }}>
-        {wedding.invitation.arabic}
-      </p>
-      <Ornament />
-      <h2 style={{ color: theme.colors.ink, margin: '14px 0 10px', fontFamily: isRtl ? "'Amiri', serif" : "'Cormorant Garamond', serif", lineHeight: isRtl ? 1.65 : undefined }}>
-        {isRtl ? 'محبت سے آغاز' : 'With love, we begin.'}
-      </h2>
-      <p className="copy" style={{ color: theme.colors.inkSoft, maxWidth: 330, margin: '0 auto', fontSize: isRtl ? 16 : 17, lineHeight: isRtl ? 1.9 : 1.7, fontFamily: isRtl ? "'Amiri', serif" : undefined }}>
-        {isRtl
-          ? 'اللہ کے نام سے ہم ایک حسین سفر کا آغاز کرتے ہیں اور آپ کو اس لمحے میں شریک ہونے کی دعوت دیتے ہیں۔'
-          : 'In the name of Allah, we begin a beautiful journey and invite you to share this precious moment with us.'}
-      </p>
-      <blockquote
-        dir="rtl"
-        lang="ar"
+      <ScheduleBow id="blessing" isRtl={isRtl} />
+
+      <div
         style={{
-          marginTop: 28,
-          fontFamily: "'Amiri', serif",
-          fontSize: isRtl ? 22 : 20,
-          lineHeight: 2.05,
-          color: theme.colors.ink,
-          maxWidth: 340,
-          marginLeft: 'auto',
-          marginRight: 'auto',
-        }}
-      >
-        {wedding.invitation.verseArabic}
-      </blockquote>
-      <p
-        dir={isRtl ? 'rtl' : 'ltr'}
-        lang={isRtl ? 'ur' : 'en'}
-        style={{
-          margin: '12px auto 0',
-          maxWidth: 340,
-          color: theme.colors.inkSoft,
-          fontSize: isRtl ? 16 : 15,
-          lineHeight: isRtl ? 1.95 : 1.7,
-          fontFamily: isRtl ? "'Amiri', serif" : "'Cormorant Garamond', serif",
-          fontStyle: isRtl ? 'normal' : 'italic',
+          position: 'relative',
+          zIndex: 2,
+          width: '100%',
+          height: '100%',
+          minHeight: '100%',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: isRtl
+            ? 'clamp(100px, 15vh, 128px) 28px max(28px, calc(env(safe-area-inset-bottom, 0px) + 20px))'
+            : 'clamp(104px, 14.5vh, 132px) 30px max(28px, calc(env(safe-area-inset-bottom, 0px) + 20px))',
+          boxSizing: 'border-box',
           textAlign: 'center',
-          overflowWrap: 'break-word',
-          wordBreak: 'normal',
         }}
       >
-        {isRtl ? wedding.invitation.verseMeaningUr : wedding.invitation.verseMeaningEn}
-      </p>
-      <small
-        dir={isRtl ? 'rtl' : 'ltr'}
-        style={{
-          display: 'block',
-          marginTop: 12,
-          color: theme.colors.muted,
-          letterSpacing: isRtl ? '0.04em' : '0.12em',
-          fontSize: isRtl ? 12 : 10,
-          fontFamily: isRtl ? "'Amiri', serif" : undefined,
-          lineHeight: isRtl ? 1.7 : undefined,
-        }}
-      >
-        {isRtl ? wedding.invitation.verseReferenceUr : wedding.invitation.verseReferenceEn}
-      </small>
+        <p className="eyebrow" style={{ color: theme.colors.gold, letterSpacing: isRtl ? '0.1em' : undefined }}>
+          {isRtl ? 'اللہ کے نام سے' : 'IN THE NAME OF ALLAH'}
+        </p>
+        <p className="arabic" style={{ color: theme.colors.ink, margin: '12px 0', fontSize: 28, lineHeight: 1.9, fontFamily: "'Amiri', serif" }}>
+          {wedding.invitation.arabic}
+        </p>
+        <Ornament />
+        <h2 style={{ color: theme.colors.ink, margin: '14px 0 10px', fontFamily: isRtl ? "'Amiri', serif" : "'Cormorant Garamond', serif", lineHeight: isRtl ? 1.65 : undefined }}>
+          {isRtl ? 'محبت سے آغاز' : 'With love, we begin.'}
+        </h2>
+        <p className="copy" style={{ color: theme.colors.inkSoft, maxWidth: 300, margin: '0 auto', fontSize: isRtl ? 16 : 17, lineHeight: isRtl ? 1.9 : 1.7, fontFamily: isRtl ? "'Amiri', serif" : undefined }}>
+          {isRtl
+            ? 'اللہ کے نام سے ہم ایک حسین سفر کا آغاز کرتے ہیں اور آپ کو اس لمحے میں شریک ہونے کی دعوت دیتے ہیں۔'
+            : 'In the name of Allah, we begin a beautiful journey and invite you to share this precious moment with us.'}
+        </p>
+        <blockquote
+          dir="rtl"
+          lang="ar"
+          style={{
+            marginTop: 28,
+            fontFamily: "'Amiri', serif",
+            fontSize: isRtl ? 22 : 20,
+            lineHeight: 2.05,
+            color: theme.colors.ink,
+            maxWidth: 300,
+            marginLeft: 'auto',
+            marginRight: 'auto',
+          }}
+        >
+          {wedding.invitation.verseArabic}
+        </blockquote>
+        <p
+          dir={isRtl ? 'rtl' : 'ltr'}
+          lang={isRtl ? 'ur' : 'en'}
+          style={{
+            margin: '12px auto 0',
+            maxWidth: 300,
+            color: theme.colors.inkSoft,
+            fontSize: isRtl ? 16 : 15,
+            lineHeight: isRtl ? 1.95 : 1.7,
+            fontFamily: isRtl ? "'Amiri', serif" : "'Cormorant Garamond', serif",
+            fontStyle: isRtl ? 'normal' : 'italic',
+            textAlign: 'center',
+            overflowWrap: 'break-word',
+            wordBreak: 'normal',
+          }}
+        >
+          {isRtl ? wedding.invitation.verseMeaningUr : wedding.invitation.verseMeaningEn}
+        </p>
+        <small
+          dir={isRtl ? 'rtl' : 'ltr'}
+          style={{
+            display: 'block',
+            marginTop: 12,
+            color: theme.colors.muted,
+            letterSpacing: isRtl ? '0.04em' : '0.12em',
+            fontSize: isRtl ? 12 : 10,
+            fontFamily: isRtl ? "'Amiri', serif" : undefined,
+            lineHeight: isRtl ? 1.7 : undefined,
+          }}
+        >
+          {isRtl ? wedding.invitation.verseReferenceUr : wedding.invitation.verseReferenceEn}
+        </small>
+      </div>
     </Card>
   );
 }
@@ -403,7 +429,10 @@ export function EventCard({ e, i, locale }: { e: WeddingEvent; i: number; locale
       video.setAttribute('playsinline', '');
       video.setAttribute('webkit-playsinline', '');
 
+      let kickedOff = false;
       const kickoff = () => {
+        if (kickedOff) return;
+        kickedOff = true;
         if (trimStart <= 0) {
           beginPlayback();
           return;
@@ -466,7 +495,7 @@ export function EventCard({ e, i, locale }: { e: WeddingEvent; i: number; locale
     <Card
       className={`event ${e.id}`}
       style={{
-        backgroundColor: e.id === 'mehndi' ? '#FDF8E7' : e.id === 'baraat' ? '#2A080C' : '#0A1F24',
+        backgroundColor: e.id === 'mehndi' ? '#F0E2A8' : '#2A080C',
         borderTop: `1px solid ${ev.border}`,
         borderBottom: `1px solid ${ev.border}`,
         color: ev.cardInk,
@@ -573,7 +602,7 @@ export function EventCard({ e, i, locale }: { e: WeddingEvent; i: number; locale
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'center',
-              // Baraat: lower so the panel covers from mid-couple down past the belly
+              // Baraat: lower panel so faces stay clear
               justifyContent: e.id === 'baraat' ? 'flex-start' : 'center',
               padding:
                 e.id === 'baraat'
@@ -680,10 +709,11 @@ export function EventCard({ e, i, locale }: { e: WeddingEvent; i: number; locale
             style={{
               position: 'relative',
               zIndex: 2,
-              margin: '12px 0 8px',
+              margin: '12px 0 0',
               justifyContent: 'center',
-              flexWrap: 'wrap',
-              gap: isRtl ? 8 : 10,
+              alignItems: 'center',
+              flexWrap: 'nowrap',
+              gap: isRtl ? 16 : 12,
               maxWidth: '100%',
             }}
           >
@@ -692,8 +722,10 @@ export function EventCard({ e, i, locale }: { e: WeddingEvent; i: number; locale
                 color: ev.cardInk,
                 fontFamily: "'Cormorant Garamond', serif",
                 fontSize: isRtl ? 'clamp(52px, 13vw, 68px)' : 'clamp(64px, 15vw, 80px)',
-                lineHeight: 0.85,
+                lineHeight: 1,
                 fontWeight: 600,
+                display: 'block',
+                paddingBottom: 2,
               }}
             >
               {date.getDate()}
@@ -738,7 +770,7 @@ export function EventCard({ e, i, locale }: { e: WeddingEvent; i: number; locale
               lineHeight: isRtl ? 1.75 : 1.4,
               fontSize: isRtl ? 14 : 13,
               fontWeight: 600,
-              margin: '2px 0 0',
+              margin: '12px 0 0',
               maxWidth: '100%',
               overflowWrap: 'anywhere',
               textAlign: 'center',
@@ -835,6 +867,15 @@ export function EventSchedule({ eventId, locale }: { eventId: 'mehndi' | 'baraat
   const isRtl = locale === 'ur';
   const [selectedIdx, setSelectedIdx] = useState<number | null>(null);
   const ev = theme.events[eventId];
+  const scheduleInk = ev.scheduleInk;
+  const scheduleInkSoft = ev.scheduleInkSoft;
+  const scheduleAccent = ev.scheduleAccent;
+  const selectedBg =
+    eventId === 'waleema' ? 'rgba(122, 145, 168, 0.14)' : 'rgba(198,161,91,0.12)';
+  const selectedBorder =
+    eventId === 'waleema' ? 'rgba(184, 149, 106, 0.45)' : theme.colors.goldLine;
+  const railFade =
+    eventId === 'waleema' ? 'rgba(184, 149, 106, 0.18)' : 'rgba(198,161,91,0.2)';
 
   return (
     <Card
@@ -846,7 +887,7 @@ export function EventSchedule({ eventId, locale }: { eventId: 'mehndi' | 'baraat
         overflow: 'visible',
         textAlign: isRtl ? 'right' : 'left',
         padding: isRtl ? '108px 22px 180px' : '120px 28px 168px',
-        color: theme.colors.ink,
+        color: scheduleInk,
       }}
     >
       <TopCanopyArch type={eventId} />
@@ -862,7 +903,7 @@ export function EventSchedule({ eventId, locale }: { eventId: 'mehndi' | 'baraat
         <p
           className="eyebrow"
           style={{
-            color: theme.colors.gold,
+            color: scheduleAccent,
             letterSpacing: isRtl ? '0.12em' : '0.3em',
             fontFamily: isRtl ? "'Amiri', serif" : undefined,
           }}
@@ -871,7 +912,7 @@ export function EventSchedule({ eventId, locale }: { eventId: 'mehndi' | 'baraat
         </p>
         <h2
           style={{
-            color: theme.colors.ink,
+            color: scheduleInk,
             margin: '8px 0 14px',
             fontFamily: isRtl ? "'Amiri', serif" : undefined,
             lineHeight: isRtl ? 1.6 : undefined,
@@ -880,7 +921,7 @@ export function EventSchedule({ eventId, locale }: { eventId: 'mehndi' | 'baraat
           {isRtl ? data.nameUr : data.nameEn}
           <em
             style={{
-              color: theme.colors.gold,
+              color: scheduleAccent,
               fontStyle: isRtl ? 'normal' : 'italic',
               display: 'block',
               fontSize: isRtl ? '0.72em' : '0.65em',
@@ -891,7 +932,7 @@ export function EventSchedule({ eventId, locale }: { eventId: 'mehndi' | 'baraat
             {isRtl ? 'تفصیلی شیڈول' : 'Schedule'}
           </em>
         </h2>
-        <Ornament />
+        <Ornament color={scheduleAccent} />
       </div>
 
       <div
@@ -914,7 +955,7 @@ export function EventSchedule({ eventId, locale }: { eventId: 'mehndi' | 'baraat
             left: isRtl ? 'auto' : 10,
             right: isRtl ? 10 : 'auto',
             width: 2,
-            background: `linear-gradient(180deg, ${theme.colors.gold} 0%, rgba(198,161,91,0.2) 100%)`,
+            background: `linear-gradient(180deg, ${scheduleAccent} 0%, ${railFade} 100%)`,
           }}
         />
         {data.items.map((item, idx) => {
@@ -932,8 +973,8 @@ export function EventSchedule({ eventId, locale }: { eventId: 'mehndi' | 'baraat
                 cursor: 'pointer',
                 padding: isRtl ? '12px 14px 14px' : '10px 14px',
                 borderRadius: 14,
-                background: isSelected ? 'rgba(198,161,91,0.12)' : 'transparent',
-                border: isSelected ? `1px solid ${theme.colors.goldLine}` : '1px solid transparent',
+                background: isSelected ? selectedBg : 'transparent',
+                border: isSelected ? `1px solid ${selectedBorder}` : '1px solid transparent',
                 transition: 'background 0.25s ease, border-color 0.25s ease',
                 font: 'inherit',
                 color: 'inherit',
@@ -950,8 +991,8 @@ export function EventSchedule({ eventId, locale }: { eventId: 'mehndi' | 'baraat
                   width: 16,
                   height: 16,
                   borderRadius: '50%',
-                  background: isSelected ? theme.colors.gold : theme.colors.cardSolid,
-                  border: `2px solid ${theme.colors.gold}`,
+                  background: isSelected ? scheduleAccent : theme.colors.cardSolid,
+                  border: `2px solid ${scheduleAccent}`,
                 }}
               />
               <span
@@ -960,7 +1001,7 @@ export function EventSchedule({ eventId, locale }: { eventId: 'mehndi' | 'baraat
                   fontSize: isRtl ? 13 : 11,
                   fontWeight: 600,
                   letterSpacing: isRtl ? '0.02em' : '0.14em',
-                  color: theme.colors.gold,
+                  color: scheduleAccent,
                   marginBottom: 4,
                   fontFamily: isRtl ? "'Amiri', serif" : undefined,
                   lineHeight: isRtl ? 1.7 : undefined,
@@ -972,7 +1013,7 @@ export function EventSchedule({ eventId, locale }: { eventId: 'mehndi' | 'baraat
                 style={{
                   margin: '0 0 6px',
                   fontSize: isRtl ? 20 : 24,
-                  color: theme.colors.ink,
+                  color: scheduleInk,
                   fontFamily: isRtl ? "'Amiri', serif" : "'Cormorant Garamond', serif",
                   lineHeight: isRtl ? 1.7 : 1.2,
                   overflowWrap: 'break-word',
@@ -985,7 +1026,7 @@ export function EventSchedule({ eventId, locale }: { eventId: 'mehndi' | 'baraat
                 style={{
                   margin: 0,
                   fontSize: isRtl ? 14 : 13,
-                  color: theme.colors.inkSoft,
+                  color: scheduleInkSoft,
                   lineHeight: isRtl ? 1.85 : 1.45,
                   fontFamily: isRtl ? "'Amiri', serif" : undefined,
                   overflowWrap: 'break-word',
