@@ -271,7 +271,7 @@ export default function ScratchReveal({ locale }: { locale: Locale }) {
 
       <svg width="0" height="0" aria-hidden style={{ position: 'absolute' }}>
         <defs>
-          {/* Soft arched invitation tablet — room for a three-event index */}
+          {/* Soft arched invitation tablet — room for Baraat + Waleema dates */}
           <clipPath id="scratch-card-clip" clipPathUnits="objectBoundingBox">
             <path d="M0.08,0.26 C0.08,0.08 0.26,0.015 0.5,0.015 C0.74,0.015 0.92,0.08 0.92,0.26 L0.92,0.9 Q0.92,0.975 0.8,0.975 L0.2,0.975 Q0.08,0.975 0.08,0.9 Z" />
           </clipPath>
