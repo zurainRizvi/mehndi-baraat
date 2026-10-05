@@ -479,21 +479,31 @@ _Zurain & Abeeha's Mehndi & Baraat Invitation_`;
                   <label style={{ ...labelStyle, marginBottom: 8 }}>{isRtl ? 'تقریبات' : 'WHICH EVENTS?'}</label>
                   <div
                     style={{
-                      display: 'grid',
-                      gridTemplateColumns: '1fr 1fr',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'center',
                       gap: 8,
                       width: '100%',
-                      maxWidth: 340,
                     }}
                   >
-                    {eventsList.map((ev) => {
-                      const on = selectedEvents.includes(ev.id);
-                      return (
-                        <button key={ev.id} type="button" onClick={() => toggleEvent(ev.id)} style={eventBtnStyle(on, ev.color)}>
-                          {isRtl ? ev.labelUr : ev.labelEn}
-                        </button>
-                      );
-                    })}
+                    <div
+                      style={{
+                        display: 'grid',
+                        gridTemplateColumns: '1fr 1fr',
+                        gap: 8,
+                        width: '100%',
+                        maxWidth: 340,
+                      }}
+                    >
+                      {eventsList.map((ev) => {
+                        const on = selectedEvents.includes(ev.id);
+                        return (
+                          <button key={ev.id} type="button" onClick={() => toggleEvent(ev.id)} style={eventBtnStyle(on, ev.color)}>
+                            {isRtl ? ev.labelUr : ev.labelEn}
+                          </button>
+                        );
+                      })}
+                    </div>
                   </div>
                 </div>
               </>
