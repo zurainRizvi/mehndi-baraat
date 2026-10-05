@@ -271,7 +271,7 @@ export default function ScratchReveal({ locale }: { locale: Locale }) {
 
       <svg width="0" height="0" aria-hidden style={{ position: 'absolute' }}>
         <defs>
-          {/* Soft arched invitation tablet — room for Mehndi + Baraat */}
+          {/* Soft arched invitation tablet — room for a three-event index */}
           <clipPath id="scratch-card-clip" clipPathUnits="objectBoundingBox">
             <path d="M0.08,0.26 C0.08,0.08 0.26,0.015 0.5,0.015 C0.74,0.015 0.92,0.08 0.92,0.26 L0.92,0.9 Q0.92,0.975 0.8,0.975 L0.2,0.975 Q0.08,0.975 0.08,0.9 Z" />
           </clipPath>
@@ -279,6 +279,8 @@ export default function ScratchReveal({ locale }: { locale: Locale }) {
       </svg>
 
       <div
+        dir={isRtl ? 'rtl' : 'ltr'}
+        lang={isRtl ? 'ur' : 'en'}
         style={{
           position: 'relative',
           zIndex: 2,
@@ -290,8 +292,9 @@ export default function ScratchReveal({ locale }: { locale: Locale }) {
           alignItems: 'center',
           justifyContent: 'flex-start',
           padding: isRtl
-            ? 'clamp(56px, 9vh, 88px) 18px max(18px, calc(env(safe-area-inset-bottom, 0px) + 12px))'
-            : 'clamp(68px, 11vh, 104px) 24px max(18px, calc(env(safe-area-inset-bottom, 0px) + 12px))',
+            ? 'clamp(56px, 9vh, 88px) 18px max(40px, calc(env(safe-area-inset-bottom, 0px) + 32px))'
+            : 'clamp(68px, 11vh, 104px) 24px max(40px, calc(env(safe-area-inset-bottom, 0px) + 32px))',
+          transform: 'none',
         }}
       >
         <p
@@ -366,7 +369,7 @@ export default function ScratchReveal({ locale }: { locale: Locale }) {
             style={{
               position: 'relative',
               width: 'min(268px, 78vw)',
-              height: 'min(248px, 52vh)',
+              height: isRtl ? 'min(248px, 52vh)' : 'min(268px, 56vh)',
               margin: '0 auto 10px',
               flexShrink: 0,
               zIndex: 3,
@@ -374,7 +377,7 @@ export default function ScratchReveal({ locale }: { locale: Locale }) {
             }}
           >
             <div
-              className={`scratch-card-visual${showHint ? ' scratch-card-live' : ''}`}
+              className="scratch-card-visual"
               style={{
                 position: 'absolute',
                 inset: 0,
@@ -619,7 +622,7 @@ export default function ScratchReveal({ locale }: { locale: Locale }) {
             placement="afterContent"
             color={pink.main}
             glow="rgba(201, 149, 158, 0.55)"
-            style={{ marginTop: isRevealed ? 8 : 2, paddingBottom: 4 }}
+            style={{ marginTop: isRevealed ? 14 : 10, paddingBottom: 12 }}
           />
         </div>
       </div>

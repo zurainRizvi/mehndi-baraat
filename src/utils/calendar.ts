@@ -19,8 +19,7 @@ function escapeIcs(text: string) {
 }
 
 /** Event start/end hours in Pakistan local time. */
-function eventHours(e: WeddingEvent): { startH: number; startM: number; endH: number; endM: number } {
-  if (e.id === 'mehndi') return { startH: 18, startM: 0, endH: 22, endM: 0 };
+function eventHours(_e: WeddingEvent): { startH: number; startM: number; endH: number; endM: number } {
   return { startH: 19, startM: 0, endH: 22, endM: 0 };
 }
 
