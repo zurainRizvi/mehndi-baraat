@@ -1,5 +1,11 @@
 import { getSupabaseClient, getSupabaseConfig } from '@/lib/supabase';
 
+/**
+ * Guest list for THIS invite only (Baraat & Waleema).
+ * Never use `rsvps` — that table is for the full Noor-e-Safar link.
+ */
+export const RSVP_TABLE = 'rsvps_baraat_waleema' as const;
+
 export type RSVPSubmission = {
   id?: string;
   name: string;
@@ -100,7 +106,7 @@ class SupabaseRSVPService implements RSVPService {
       throw new Error('Supabase is not configured');
     }
 
-    const { error } = await supabase.from('rsvps').insert({
+    const { error } = await supabase.from(RSVP_TABLE).insert({
       name: data.name,
       response: data.response,
       events: data.events,
@@ -141,7 +147,7 @@ class SupabaseRSVPService implements RSVPService {
     if (!supabase) return [];
 
     const { data, error } = await supabase
-      .from('rsvps')
+      .from(RSVP_TABLE)
       .select('id, name, response, events, guests, message, submitted_at')
       .order('submitted_at', { ascending: false });
 
@@ -158,8 +164,11 @@ class SupabaseRSVPService implements RSVPService {
       throw new Error('Supabase is not configured');
     }
 
-    // PostgREST requires a filter for deletes; this matches every row.
-    const { error } = await supabase.from('rsvps').delete().neq('id', '00000000-0000-0000-0000-000000000000');
+    // PostgREST requires a filter for deletes; this matches every row in THIS invite's table.
+    const { error } = await supabase
+      .from(RSVP_TABLE)
+      .delete()
+      .neq('id', '00000000-0000-0000-0000-000000000000');
 
     if (error) {
       throw error;

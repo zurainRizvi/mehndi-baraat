@@ -10,7 +10,7 @@
 - [ ] Replace the placeholder WhatsApp number and share message.
 - [ ] Replace the social preview graphic and metadata.
 - [ ] Decide whether Story and Gallery stay enabled.
-- [ ] Create the Supabase `rsvps` table (`supabase/rsvps.sql`), set `.env.local` / Vercel env vars, and test Confirm RSVP + the corner admin panel.
+- [ ] Create the isolated Supabase table `rsvps_baraat_waleema` (`supabase/rsvps_baraat_waleema.sql`), set `.env.local` / Vercel env vars, and test Confirm RSVP + admin (must not show guests from other invite links).
 - [ ] Test all map links, downloaded calendar files, mobile layouts, keyboard access, and reduced motion.
 - [ ] Decide whether the final invitation needs password/access control; `noindex` alone is not privacy.
 - [ ] Remove or revise all text containing “Sample” before sharing.

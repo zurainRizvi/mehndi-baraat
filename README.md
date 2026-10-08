@@ -19,13 +19,15 @@ Open `http://localhost:3000`. For production verification, run `npm run lint`, `
 
 ## RSVP with Supabase
 
-Guest replies are saved through `RSVPService` in `src/services/rsvp.ts`. With Supabase configured, every Confirm RSVP writes to a shared `rsvps` table (WhatsApp is still optional). Without Supabase, responses stay in the browser’s local storage only.
+Guest replies are saved through `RSVPService` in `src/services/rsvp.ts`. With Supabase configured, every Confirm RSVP writes to **`public.rsvps_baraat_waleema`** (WhatsApp is still optional). Without Supabase, responses stay in this invite’s browser local storage only (`baraat-waleema-rsvp*`).
+
+This table is **isolated from other invitation links**. The full Noor-e-Safar invite uses `public.rsvps`. Admin on this site only reads/writes `rsvps_baraat_waleema`, so guests from other links never appear here (and vice versa), even if both sites share one Supabase project.
 
 ### 1. Create the table
 
-In Supabase → SQL Editor, run [`supabase/rsvps.sql`](supabase/rsvps.sql). That creates `public.rsvps` and anon insert/select/delete policies for the frontend admin panel.
+In Supabase → SQL Editor, run [`supabase/rsvps_baraat_waleema.sql`](supabase/rsvps_baraat_waleema.sql). That creates `public.rsvps_baraat_waleema` and anon insert/select/delete policies for this invite’s admin panel.
 
-Use a **separate Supabase project** (or a separate table/schema) from the full Noor-e-Safar invite so Baraat & Waleema replies do not mix with the three-event list.
+Do **not** run the full invite’s `rsvps.sql` for this site, and do not point this site at the `rsvps` table.
 
 ### 2. Environment variables
 
@@ -38,7 +40,7 @@ NEXT_PUBLIC_ADMIN_PASSWORD=your_private_password
 
 ### 3. Admin panel
 
-On the RSVP card, tap the muted **admin** label in the bottom-right corner, enter the admin password, then review attending / declining lists and total guest headcount. **Refresh** reloads from Supabase; **Reset list** clears every saved response (confirm first). If the table already existed before reset support was added, also run [`supabase/rsvps_allow_delete.sql`](supabase/rsvps_allow_delete.sql).
+On the RSVP card, tap the muted **admin** label in the bottom-right corner, enter the admin password, then review attending / declining lists and total guest headcount for **this link only**. **Refresh** reloads from `rsvps_baraat_waleema`; **Reset list** clears only that table (confirm first). If the table already existed before reset support was added, also run [`supabase/rsvps_baraat_waleema_allow_delete.sql`](supabase/rsvps_baraat_waleema_allow_delete.sql).
 
 This is frontend-only: the password gate is the practical barrier. Anyone with the anon key can also query the table if they know how.
 
