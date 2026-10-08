@@ -68,7 +68,11 @@ export const wedding = {
     contactNumber: '923053333409',
     shareMessage: "You are warmly invited to Zurain and Abeeha's Baraat and Waleema celebrations in Lahore, January 2027.",
   },
-  rsvp: { deadline: '2026-12-20' },
+  rsvp: {
+    deadline: '2026-12-20',
+    /** Used by the RSVP corner admin panel (override with NEXT_PUBLIC_ADMIN_PASSWORD). */
+    adminPassword: 'zurain007!!',
+  },
   musicPath: '/audio/islamic-calm.mp3',
   social: {
     title: 'Baraat & Waleema — Zurain & Abeeha',
