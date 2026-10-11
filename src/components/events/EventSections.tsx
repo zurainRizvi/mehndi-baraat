@@ -398,6 +398,7 @@ export function EventCard({ e, i, locale }: { e: WeddingEvent; i: number; locale
       textTimerRef.current = null;
     }
     revealText();
+    setMediaVisible(true);
     setVideoDone(true);
     setZoomActive(false);
     const video = videoRef.current;
