@@ -402,7 +402,7 @@ export default function ScratchReveal({ locale }: { locale: Locale }) {
 
       <svg width="0" height="0" aria-hidden style={{ position: 'absolute' }}>
         <defs>
-          {/* Soft arched invitation tablet — room for Baraat + Waleema dates */}
+          {/* Soft arched invitation tablet — room for a three-event index */}
           <clipPath id="scratch-card-clip" clipPathUnits="objectBoundingBox">
             <path d="M0.08,0.26 C0.08,0.08 0.26,0.015 0.5,0.015 C0.74,0.015 0.92,0.08 0.92,0.26 L0.92,0.9 Q0.92,0.975 0.8,0.975 L0.2,0.975 Q0.08,0.975 0.08,0.9 Z" />
           </clipPath>
@@ -452,7 +452,7 @@ export default function ScratchReveal({ locale }: { locale: Locale }) {
             <>
               تواریخ کی نقاب کشائی
               <em style={{ color: pink.main, display: 'block', fontStyle: 'normal', fontSize: '0.78em', marginTop: 6 }}>
-                دو تقریبات، ایک جشن
+                تین تقریبات، ایک جشن
               </em>
             </>
           ) : (
@@ -500,6 +500,7 @@ export default function ScratchReveal({ locale }: { locale: Locale }) {
             style={{
               position: 'relative',
               width: 'min(268px, 78vw)',
+              // Same footprint in EN/UR so locale swaps don't resize the foil stage.
               height: 'min(280px, 54vh)',
               margin: '0 auto 10px',
               flexShrink: 0,
@@ -762,16 +763,19 @@ export default function ScratchReveal({ locale }: { locale: Locale }) {
             // Keep the same vertical space so snap doesn't jump to page 1 after reveal.
             <div aria-hidden style={{ height: 50, marginTop: 2, marginBottom: 4, flexShrink: 0 }} />
           )}
-
-          <ScrollDownHint
-            locale={locale}
-            placement="afterContent"
-            color={pink.main}
-            glow="rgba(201, 149, 158, 0.55)"
-            style={{ marginTop: isRevealed ? 14 : 10, paddingBottom: 12 }}
-          />
         </div>
       </div>
+
+      {/*
+        Pin to the page footer — afterContent was clipped by the locked reveal-date-card
+        height once tap-to-reveal swapped the button for a spacer.
+      */}
+      <ScrollDownHint
+        locale={locale}
+        placement="footer"
+        color={pink.main}
+        glow="rgba(201, 149, 158, 0.55)"
+      />
     </Card>
   );
 }
